@@ -51,7 +51,7 @@ Since uprading to Angular 12 the following issues occur:
 
    `ERROR TypeError: options.parentView.showModal is not a function`
 
-Related GitHub issue: 
+Related GitHub issue: https://github.com/NativeScript/angular/issues/17
 
 **To Reproduce**
 1. Clone this repository
