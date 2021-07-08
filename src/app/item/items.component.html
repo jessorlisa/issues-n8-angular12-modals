@@ -25,7 +25,7 @@ You can learn more about the NativeScript core theme at https://github.com/nativ
 <GridLayout>
   <ListView [items]="items">
     <ng-template let-item="item">
-      <StackLayout [nsRouterLink]="['/item', item.id]">
+      <StackLayout (tap)="openDetailModal(item.id)">
         <Label [text]="item.name"></Label>
       </StackLayout>
     </ng-template>

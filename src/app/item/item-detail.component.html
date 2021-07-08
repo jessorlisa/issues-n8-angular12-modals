@@ -1,9 +1,18 @@
-<ActionBar title="Details"></ActionBar>
+<ScrollView>
+  <StackLayout>
 
-<FlexboxLayout flexDirection="column">
-  <FlexboxLayout class="m-15">
-    <Label class="h2" [text]="item.id + '. '"></Label>
-    <Label class="h2" [text]="item.name"></Label>
-  </FlexboxLayout>
-  <Label class="h4 m-15" [text]="item.role"></Label>
-</FlexboxLayout>
+    <StackLayout (tap)="closeModal()" backgroundColor="LightBlue">
+      <Label class="body p-16" [text]="'(X) Close Modal'"></Label>
+    </StackLayout>
+
+    <FlexboxLayout flexDirection="column">
+      <FlexboxLayout class="m-15">
+        <Label class="h2" [text]="item.id + '. '"></Label>
+        <Label class="h2" [text]="item.name"></Label>
+      </FlexboxLayout>
+      <Label class="h4 m-15" [text]="'The page should scroll as it is within a ScrollView and the player\'s role is repeated 100 times... '" textWrap="true"></Label>
+      <Label *ngFor="let i of iterations" class="h4 m-15" [text]="i + ' - ' + item.role"></Label>
+    </FlexboxLayout>
+
+  </StackLayout>
+</ScrollView>
