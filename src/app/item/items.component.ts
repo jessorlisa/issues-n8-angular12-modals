@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core'
-import {ModalDialogOptions, ModalDialogService} from "@nativescript/angular";
+import {NativeDialogConfig, NativeDialogService} from "@nativescript/angular";
 
 import {Item} from './item'
 import {ItemService} from './item.service'
@@ -13,10 +13,8 @@ import {ItemDetailComponent} from "./item-detail.component";
 export class ItemsComponent implements OnInit {
   items: Array<Item>
 
-
-
   constructor(
-    private modalService: ModalDialogService,
+    private nativeDialogService: NativeDialogService,
     private vcRef: ViewContainerRef,
     private itemService: ItemService
   ) {
@@ -29,7 +27,7 @@ export class ItemsComponent implements OnInit {
 
   /**
    * ************************************************************************
-   * Open detail modal
+   * Open detail dialog (modal)
    */
 
   /**
@@ -37,25 +35,20 @@ export class ItemsComponent implements OnInit {
    */
   openDetailModal(itemId: number): void {
 
-    this.createDetailModal(itemId).then(result => {
-
-      console.log('MODAL CLOSED:', result);
-
-    }).catch(error => console.log('ERROR', error));
-  }
-
-  /**
-   *
-   * @param itemId
-   */
-  private createDetailModal(itemId: number): Promise<any> {
-    const options: ModalDialogOptions = {
-      viewContainerRef: this.vcRef,
-      context: itemId,
-      fullscreen: true,
+    const options: NativeDialogConfig = {
+      viewContainerRef: this.vcRef, // necessary for iOS if another modal should be opened from this modal
+      data: {
+        itemId: itemId
+      },
+      nativeOptions: {
+        fullscreen: true
+      }
     };
 
-    // showModal returns a promise with the received parameters from the modal page
-    return this.modalService.showModal(ItemDetailComponent, options);
+    this.nativeDialogService.open(ItemDetailComponent, options)
+      .afterClosed()
+      .subscribe((result) => {
+        console.log('MODAL CLOSED:', result);
+      });
   }
 }

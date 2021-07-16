@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {ModalDialogParams} from '@nativescript/angular';
+import {Component, Inject, OnInit} from '@angular/core';
+
+import {NATIVE_DIALOG_DATA, NativeDialogRef} from '@nativescript/angular';
 
 @Component({
   selector: 'ns-item-second-modal',
@@ -10,16 +11,17 @@ export class ItemSecondModalComponent implements OnInit {
   itemName: string;
 
   constructor(
-    private params: ModalDialogParams
+    @Inject(NATIVE_DIALOG_DATA) private data: { [key: string]: any },
+    private nativeDialogRef: NativeDialogRef<ItemSecondModalComponent>
   ) {
-    this.itemName = params.context;
+    this.itemName = this.data.itemName;
   }
 
   ngOnInit(): void {
   }
 
   closeModal(): void {
-    this.params.closeCallback({
+    this.nativeDialogRef.close({
       name: this.itemName
     });
   }

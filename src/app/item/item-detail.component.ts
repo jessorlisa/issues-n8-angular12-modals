@@ -1,5 +1,6 @@
-import {Component, OnInit, ViewContainerRef} from '@angular/core';
-import {ModalDialogOptions, ModalDialogParams, ModalDialogService} from '@nativescript/angular';
+import {Component, Inject, OnInit, ViewContainerRef} from '@angular/core';
+
+import {NATIVE_DIALOG_DATA, NativeDialogConfig, NativeDialogRef, NativeDialogService} from "@nativescript/angular";
 
 import {Item} from './item';
 import {ItemService} from './item.service';
@@ -17,14 +18,16 @@ export class ItemDetailComponent implements OnInit {
   iterations: number[];
 
   constructor(
-    private params: ModalDialogParams,
-    private modalService: ModalDialogService,
+    @Inject(NATIVE_DIALOG_DATA) private data: { [key: string]: any },
+    private nativeDialogService: NativeDialogService,
+    private nativeDialogRef: NativeDialogRef<ItemDetailComponent>,
     private vcRef: ViewContainerRef,
     private itemService: ItemService
   ) {
-    this.itemId = params.context;
 
-    this.iterations = Array(100).fill(0).map((x, i) => i+1);
+    this.itemId = this.data.itemId;
+
+    this.iterations = Array(100).fill(0).map((x, i) => i + 1);
   }
 
   ngOnInit(): void {
@@ -33,7 +36,7 @@ export class ItemDetailComponent implements OnInit {
   }
 
   closeModal(): void {
-    this.params.closeCallback({
+    this.nativeDialogRef.close({
       name: this.item.name
     });
   }
@@ -47,25 +50,20 @@ export class ItemDetailComponent implements OnInit {
    *
    */
   openSecondModal(): void {
-
-    this.createSecondModal().then(result => {
-
-      console.log('MODAL (2nd) CLOSED:', result);
-
-    }).catch(error => console.log('ERROR', error));
-  }
-
-  /**
-   *
-   */
-  private createSecondModal(): Promise<any> {
-    const options: ModalDialogOptions = {
-      viewContainerRef: this.vcRef,
-      context: this.item.name,
-      fullscreen: true,
+    const options: NativeDialogConfig = {
+      viewContainerRef: this.vcRef, // necessary for iOS if another modal should be opened from this modal
+      data: {
+        itemName: this.item.name
+      },
+      nativeOptions: {
+        fullscreen: true
+      }
     };
 
-    // showModal returns a promise with the received parameters from the modal page
-    return this.modalService.showModal(ItemSecondModalComponent, options);
+    this.nativeDialogService.open(ItemSecondModalComponent, options)
+      .afterClosed()
+      .subscribe((result) => {
+        console.log('MODAL (2nd) CLOSED:', result);
+      });
   }
 }
